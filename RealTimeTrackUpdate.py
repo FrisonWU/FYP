@@ -24,8 +24,11 @@ class RealTime:
             TOP = area_status[item, cv2.CC_STAT_TOP]
             WIDTH = area_status[item, cv2.CC_STAT_WIDTH]
             HEIGHT = area_status[item, cv2.CC_STAT_HEIGHT]
-            img_bin = cv2.rectangle(binary, (LEFT, TOP), (LEFT + WIDTH, TOP + HEIGHT), (0, 255, 0), 3)
-            img_cropped = img_bin[TOP:TOP + HEIGHT, LEFT:LEFT + WIDTH]
+            #img_bin = cv2.rectangle(binary, (LEFT, TOP), (LEFT + WIDTH, TOP + HEIGHT), (0, 255, 0), 3)
+            img_cropped = binary[TOP:TOP + HEIGHT, LEFT:LEFT + WIDTH]
+            blank = np.zeros((HEIGHT + 100, WIDTH + 100), dtype=img_cropped.dtype)
+            blank[50:50 + HEIGHT, 50:50 + WIDTH] = img_cropped
+            img_cropped = blank
 
             if WIDTH < 5 or HEIGHT < 5:
                 continue
