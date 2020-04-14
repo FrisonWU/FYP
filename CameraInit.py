@@ -8,16 +8,16 @@ index = 0
 while True:
     ret, frame = cap.read()
     # Our operations on the frame come here
-    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2G)
+    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     # Display the resulting frame
     cv2.imshow('frame', gray)
     if cv2.waitKey(1) & 0xFF == 27:  ##ESC
         break
     elif cv2.waitKey(1) & 0xFF == ord('l'):
-        cv2.imwrite("Cam_hori.jpg", frame)
+        cv2.imwrite("New tar.jpg", frame)
         continue
     elif cv2.waitKey(1) & 0xFF == ord('p'):
-        cv2.imwrite("Cam_Heigh.jpg", frame)
+        cv2.imwrite("tar.jpg", frame)
         continue
 
 

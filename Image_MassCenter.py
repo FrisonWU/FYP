@@ -17,10 +17,11 @@ def Boundbox (src,template,max_area=0,max_label=0,left=0,top=0,width=0,height=0)
         TOP = area_status[item, cv2.CC_STAT_TOP]
         WIDTH = area_status[item, cv2.CC_STAT_WIDTH]
         HEIGHT = area_status[item, cv2.CC_STAT_HEIGHT]
-        img_bin = cv2.rectangle(binary, (LEFT, TOP), (LEFT + WIDTH, TOP + HEIGHT), (0, 255, 0), 3)
+        #img_bin = cv2.rectangle(binary, (LEFT, TOP), (LEFT + WIDTH, TOP + HEIGHT), (0, 255, 0), 3)
         #img_cropped = img_bin.crop((LEFT,TOP,LEFT + WIDTH,TOP + HEIGHT))
-        img_cropped = img_bin[TOP:TOP+HEIGHT,LEFT:LEFT+WIDTH]
+        img_cropped = binary[TOP:TOP+HEIGHT,LEFT:LEFT+WIDTH]
         cv2.imshow('Original',binary)
+        #cv2.imshow('imbin',img_bin)
         cv2.imshow('Cropped', img_cropped)
 
         if WIDTH < 5 or HEIGHT < 5:
@@ -151,6 +152,8 @@ img2 = cv2.resize(img2,dsize=(int(img2.shape[1]/2),int(img2.shape[0]/2)))
 img3= cv2.imread('star2.jpg',cv2.IMREAD_GRAYSCALE)
 img3 = cv2.resize(img3,dsize=(int(img3.shape[1]/2),int(img3.shape[0]/2)))
 img4 = cv2.imread('star3.jpg',cv2.IMREAD_GRAYSCALE)
+img4 = cv2.resize(img4,dsize=(int(img4.shape[1]/2),int(img4.shape[0]/2)))
+img4 = cv2.imread('temp.jpg',cv2.IMREAD_GRAYSCALE)
 img4 = cv2.resize(img4,dsize=(int(img4.shape[1]/2),int(img4.shape[0]/2)))
 cv2.imshow('original',img2)
 ret, img2_bin = cv2.threshold(img2, 120, 255, cv2.THRESH_BINARY)
