@@ -78,19 +78,22 @@ def MassCenter(src, OutputImage, size):
 if __name__ == '__main__':
     cap = cv2.VideoCapture(0)
     temp = cv2.imread('temp_invbin.jpg',cv2.IMREAD_GRAYSCALE)
-    cv2.imshow('temp',temp)
-    #temp = cv2.resize(temp,dsize=(int(temp.shape[1]/2),int(temp.shape[0]/2)))
-    tar = cv2.imread('tar.jpg',cv2.IMREAD_GRAYSCALE)
-    cv2.imshow('tar',tar)
-    ret, tar = cv2.threshold(tar, 200, 255, cv2.THRESH_BINARY)  # set threshold and obtain binary image
-    Boundbox(tar,temp)
-    # while True:
-    #     ret, frame = cap.read()
-    #     # Our operations on the frame come here
-    #     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-    #     ret,bin = cv2.threshold(gray,200,255,cv2.THRESH_BINARY)
-    #     cv2.imshow('bincam',bin)
-    #     #Boundbox(bin,temp)
+    #cv2.imshow('temp',temp)
+    temp = cv2.resize(temp,dsize=(int(temp.shape[1]/2),int(temp.shape[0]/2)))
+    # tar = cv2.imread('tar.jpg',cv2.IMREAD_GRAYSCALE)
+    # cv2.imshow('tar',tar)
+    # ret, tar = cv2.threshold(tar, 200, 255, cv2.THRESH_BINARY)  # set threshold and obtain binary image
+    # Boundbox(tar,temp)
+    while True:
+        ret, frame = cap.read()
+        # Our operations on the frame come here
+        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        ret,bin = cv2.threshold(gray,200,255,cv2.THRESH_BINARY)
+        #cv2.imshow('bincam',bin)
+        Boundbox(bin,temp)
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            cap.release()
+            break
 
     cv2.waitKey(0)
     cv2.destroyAllWindows()
