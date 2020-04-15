@@ -55,6 +55,37 @@ def Boundbox(src, template):  # find the mass center of the target in picture
     bincopy[label != item_min] = 0
     return bincopy
 
+def Homography(img1,img2):
+    orb =  cv2.ORB_create()
+    kp1, des1 = orb.detectAndCompute(img1, None)
+    kp2, des2 = orb.detectAndCompute(img2, None)
+    # create BFMatcher object
+    bf = cv2.BFMatcher(cv2.NORM_HAMMING2, crossCheck=True)  # 对两个字符串进行异或运算，并统计结果为1的个数，那么这个数就是汉明距离
+    try:
+        # Match descriptors.
+        matches = bf.match(des1, des2)
+        # 由于匹配顺序是：matches = bf.match(des1,des2)，先des1后des2。
+        # 因此，kp1的索引由DMatch对象属性为queryIdx决定，kp2的索引由DMatch对象属性为trainIdx决定
+        # Sort them in the order of their distance.
+        matches = sorted(matches, key=lambda x: x.distance)  # 按distance排序
+
+        img3 = cv2.drawMatches(img1, kp1, img2, kp2, matches[:80], None, flags=2)
+
+        src_pts = np.float32([kp1[m.queryIdx].pt for m in matches])
+        dst_pts = np.float32([kp2[m.trainIdx].pt for m in matches])
+        # print(src_pts)
+        H, mask = cv2.findHomography(src_pts, dst_pts, cv2.RANSAC, 5.5)
+        # print(mask.shape)
+        # matchesMask = mask.ravel().tolist()
+
+        # self.observation = np.array([[H[0, 0]],[H[0, 1]],[H[0, 2]],[H[1, 0]],
+        #  [H[1, 1]],[H[1, 2]]])
+        # print(self.observation)
+
+        print(H)
+        cv2.imshow('homo',img3)
+    except:
+        print("Less than 10 matches")
 
 def MassCenter(src, OutputImage, size):
     image_matrix = np.mat(src)
@@ -76,7 +107,9 @@ def MassCenter(src, OutputImage, size):
     src = cv2.line(OutputImage, (y_start, xcenter), (y_end, xcenter), (255, 0, 0), 3)
     src = cv2.line(OutputImage, (ycenter, x_start), (ycenter, x_end), (255, 0, 0), 3)
 if __name__ == '__main__':
+    i=1
     cap = cv2.VideoCapture(0)
+    ret,frame = cap.read()
     temp = cv2.imread('temp_invbin.jpg',cv2.IMREAD_GRAYSCALE)
     #cv2.imshow('temp',temp)
     temp = cv2.resize(temp,dsize=(int(temp.shape[1]/2),int(temp.shape[0]/2)))
@@ -84,13 +117,22 @@ if __name__ == '__main__':
     # cv2.imshow('tar',tar)
     # ret, tar = cv2.threshold(tar, 200, 255, cv2.THRESH_BINARY)  # set threshold and obtain binary image
     # Boundbox(tar,temp)
+    preframe = frame
     while True:
+        #preframe = frame
         ret, frame = cap.read()
         # Our operations on the frame come here
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         ret,bin = cv2.threshold(gray,200,255,cv2.THRESH_BINARY)
         #cv2.imshow('bincam',bin)
-        Boundbox(bin,temp)
+        imgbin=Boundbox(bin,temp)
+        cv2.imshow('bin',imgbin)
+        if i % 10 == 0:
+            preframe = frame
+        i = i+1
+        cv2.imshow('preframe',preframe)
+        Homography(preframe,frame)
+        print(i)
         if cv2.waitKey(1) & 0xFF == ord('q'):
             cap.release()
             break
